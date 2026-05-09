@@ -126,7 +126,7 @@ def filter_latest_test_results(input_file, output_file, unit_mapping,file_sort, 
             else:
                 print("\n[Info] 太棒了！MAP FILE 中的所有序號都有對應到測試紀錄。")
     except FileNotFoundError:
-    # ... (後面的例外處理保持不變) ...      
+        print(f"[Error] 找不到檔案：{input_file}")     
           
 if __name__ == "__main__":
     # Ensure Windows terminal outputs UTF-8 correctly
