@@ -99,6 +99,7 @@ def filter_latest_test_results(input_file, output_file, unit_mapping,file_sort, 
         print(f"[Error] File not found: {input_file}. Please check the file name or path.")
     except Exception as e:
         print(f"[Error] An unknown error occurred: {e}")
+    
     try:
         # ... (讀取與寫入檔案的邏輯) ...
 
@@ -118,16 +119,20 @@ def filter_latest_test_results(input_file, output_file, unit_mapping,file_sort, 
             unused_sns = map_sns - tested_sns
             
             if unused_sns:
-                print(f"\n[Info] 發現 {len(unused_sns)} 筆 MAP FILE 中的序號未被使用於本次資料：")
-                # 把沒用到的序號與對應的機台號碼印出來
-                for sn in unused_sns:
-                    unit_num = unit_mapping[sn]
-                    print(f"  - 序號 (SN): {sn}  =>  機台 (Unit#): {unit_num}")
-            else:
-                print("\n[Info] 太棒了！MAP FILE 中的所有序號都有對應到測試紀錄。")
+                print(f"\n[Info] 發現 {len(unused_sns)} 筆 MAP FILE 序號未被使用，已將清單存入 unmatched_sn.txt")
+                
+                # 💡 加上了引號的正確檔名！
+                with open('unmatched_sn.txt', mode='w', encoding='utf-8') as log_file:
+                    for sn in unused_sns:
+                        unit_num = unit_mapping[sn]
+                        log_file.write(f"序號 (SN): {sn}  =>  機台 (Unit#): {unit_num}\n")
+       
     except FileNotFoundError:
-        print(f"[Error] 找不到檔案：{input_file}")     
-          
+        print(f"[Error] 找不到檔案：{input_file}")
+    
+
+
+
 if __name__ == "__main__":
     # Ensure Windows terminal outputs UTF-8 correctly
     sys.stdout.reconfigure(encoding='utf-8')
