@@ -82,7 +82,6 @@ def extract_universal_mac(target_folder, output_folder,unit_map):
 
         # --- Case 1: Handle .tar.gz or .tgz ---
         if file_name.endswith('.tar.gz') or file_name.endswith('.tgz'):
-            folder_name = file_path.name[:-7] if file_name.endswith('.tar.gz') else file_path.name[:-4]
             # 💡 Call the robot to create the folder and get the path
             extract_dir = create_folder_if_not_exists(output_path,custom_folder_name)
             
