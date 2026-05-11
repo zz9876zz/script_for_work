@@ -70,11 +70,9 @@ def extract_universal_mac(target_folder, output_folder,unit_map):
         original_name = file_path.name        
         base_name = original_name.split('.')[0]         
         parts = base_name.split('_')   
-        sn = parts[0] 
-        
+        sn = parts[0]         
         # 4. 去字典查機台號碼 (找不到就顯示 Unknown)
-        unit_num = unit_map.get(sn, 'Unknown')
-        
+        unit_num = unit_map.get(sn, 'Unknown')        
         # 5. 終極組合：產出 "#40_ABC" 這種格式！
         custom_folder_name = f"#{unit_num}_{sn}"
         
@@ -86,7 +84,7 @@ def extract_universal_mac(target_folder, output_folder,unit_map):
         if file_name.endswith('.tar.gz') or file_name.endswith('.tgz'):
             folder_name = file_path.name[:-7] if file_name.endswith('.tar.gz') else file_path.name[:-4]
             # 💡 Call the robot to create the folder and get the path
-            extract_dir = create_folder_if_not_exists(output_path, folder_name)
+            extract_dir = create_folder_if_not_exists(output_path,custom_folder_name)
             
             print(f"📦 Extracting Tarball: {file_path.name}")
             try:
