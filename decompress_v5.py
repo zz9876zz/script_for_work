@@ -24,24 +24,24 @@ def create_folder_if_not_exists(folder_path, folder_name):
     """Prepare the destination folder for extraction (handling retests)"""
     extract_dir = folder_path / folder_name
     
-    # 1. 如果資料夾還不存在，直接建立並回傳
+    # 1. If the folder does not exist, create it and return directly
     if not extract_dir.exists():
         extract_dir.mkdir(parents=True)
         return extract_dir
         
-    # 2. 如果資料夾已經存在，啟動 Retest 命名機制！
+    # 2. If the folder already exists, trigger the Retest naming mechanism!
     counter = 1
     while True:
-        # 組裝新的名字，例如：#403_D0317QJ3YG_retest_1
+        # Assemble the new name, e.g.: #403_D0317QJ3YG_retest_1
         new_folder_name = f"{folder_name}_retest_{counter}"
         new_extract_dir = folder_path / new_folder_name
         
-        # 檢查加上後綴的新名字是否可用，可以的話就建立並打完收工
+        # Check if the new name with the suffix is available; if so, create it and return
         if not new_extract_dir.exists():
             new_extract_dir.mkdir(parents=True)
             return new_extract_dir
             
-        # 如果 _retest_1 也存在了，就把數字 +1，迴圈重跑檢查 _retest_2
+        # If _retest_1 also exists, increment the counter by 1 and loop again to check _retest_2
         counter += 1
 
 def load_unit_mapping(map_file):
@@ -67,7 +67,7 @@ def load_unit_mapping(map_file):
 
 # ==========================================
 
-def extract_universal_mac(target_folder, output_folder,unit_map):
+def extract_universal_mac(target_folder, output_folder, unit_map):
     """
     Automatically determine format, extract, filter Mac hidden files, and archive upon success.
     """
@@ -89,19 +89,21 @@ def extract_universal_mac(target_folder, output_folder,unit_map):
         base_name = original_name.split('.')[0]         
         parts = base_name.split('_')   
         sn = parts[0]         
-        # 4. 去字典查機台號碼 (找不到就顯示 Unknown)
+        
+        # Look up the unit number in the dictionary (default to 'Unknown' if not found)
         unit_num = unit_map.get(sn, 'Unknown')        
-        # 5. 終極組合：產出 "#40_ABC" 這種格式！
+        
+        # Final combination: generate a format like "#403_D0317QJ3YG"
         custom_folder_name = f"#{unit_num}_{sn}"
         
-        # 轉小寫，只是為了方便下面判斷副檔名
+        # Convert to lowercase, just to facilitate checking the file extension below
         file_name_lower = original_name.lower()
 
 
         # --- Case 1: Handle .tar.gz or .tgz ---
-        if file_name.endswith('.tar.gz') or file_name.endswith('.tgz'):
-            # 💡 Call the robot to create the folder and get the path
-            extract_dir = create_folder_if_not_exists(output_path,custom_folder_name)
+        if file_name_lower.endswith('.tar.gz') or file_name_lower.endswith('.tgz'):
+            # Call the robot to create the folder and get the path
+            extract_dir = create_folder_if_not_exists(output_path, custom_folder_name)
             
             print(f"📦 Extracting Tarball: {file_path.name} -> {extract_dir.name}")
             try:
@@ -116,8 +118,8 @@ def extract_universal_mac(target_folder, output_folder,unit_map):
                 print(f"❌ Failed to extract. The file might be corrupted.\n")
 
         # --- Case 2: Handle standard .zip ---
-        elif file_name.endswith('.zip'):
-            # 💡 Call the robot to create the folder and get the path
+        elif file_name_lower.endswith('.zip'):
+            # Call the robot to create the folder and get the path
             extract_dir = create_folder_if_not_exists(output_path, custom_folder_name)
             
             print(f"📦 Extracting ZIP: {file_path.name} -> {extract_dir.name}")
@@ -142,8 +144,8 @@ def extract_universal_mac(target_folder, output_folder,unit_map):
                     print(f"❌ System extraction also failed. The file might be corrupted.\n")
 
         # --- Case 3: Handle Apple-specific .aar ---
-        elif file_name.endswith('.aar'):
-            # 💡 Call the robot to create the folder and get the path
+        elif file_name_lower.endswith('.aar'):
+            # Call the robot to create the folder and get the path
             extract_dir = create_folder_if_not_exists(output_path, custom_folder_name)
             print(f"📦 Extracting Apple Archive: {file_path.name} -> {extract_dir.name}")
             try:
@@ -179,5 +181,5 @@ if __name__ == "__main__":
     else:
         default_map_file = Path(__file__).resolve().parent / "unit_num_table.csv"
         unit_mapping_dict = load_unit_mapping(default_map_file)
-       #default is "unit_num_table.csv" in the same folder  
-    extract_universal_mac(TARGET_DIR, OUTPUT_DIR,unit_mapping_dict)
+        
+    extract_universal_mac(TARGET_DIR, OUTPUT_DIR, unit_mapping_dict)
