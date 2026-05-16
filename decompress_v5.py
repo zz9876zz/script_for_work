@@ -103,7 +103,7 @@ def extract_universal_mac(target_folder, output_folder,unit_map):
             # 💡 Call the robot to create the folder and get the path
             extract_dir = create_folder_if_not_exists(output_path,custom_folder_name)
             
-            print(f"📦 Extracting Tarball: {file_path.name} -> {custom_folder_name}")
+            print(f"📦 Extracting Tarball: {file_path.name} -> {extract_dir.name}")
             try:
                 with tarfile.open(file_path, 'r:gz') as tar_ref:
                     clean_members = [m for m in tar_ref.getmembers() if not m.name.startswith('__MACOSX') and not m.name.endswith('.DS_Store') and not '/._' in m.name]
@@ -120,7 +120,7 @@ def extract_universal_mac(target_folder, output_folder,unit_map):
             # 💡 Call the robot to create the folder and get the path
             extract_dir = create_folder_if_not_exists(output_path, custom_folder_name)
             
-            print(f"📦 Extracting ZIP: {file_path.name} -> {custom_folder_name}")
+            print(f"📦 Extracting ZIP: {file_path.name} -> {extract_dir.name}")
             try:
                 with zipfile.ZipFile(file_path, 'r') as zip_ref:
                     clean_members = [m for m in zip_ref.namelist() if not m.startswith('__MACOSX/') and not m.endswith('.DS_Store')]
@@ -145,7 +145,7 @@ def extract_universal_mac(target_folder, output_folder,unit_map):
         elif file_name.endswith('.aar'):
             # 💡 Call the robot to create the folder and get the path
             extract_dir = create_folder_if_not_exists(output_path, custom_folder_name)
-            print(f"📦 Extracting Apple Archive: {file_path.name} -> {custom_folder_name}")
+            print(f"📦 Extracting Apple Archive: {file_path.name} -> {extract_dir.name}")
             try:
                 cmd = ['aa', 'extract', '-i', str(file_path), '-d', str(extract_dir)]
                 subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
