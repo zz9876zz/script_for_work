@@ -21,10 +21,28 @@ def create_old(file_path, folder_path):
     print(f"📁 Archived original file to {archive_dir.resolve()}\n")
 
 def create_folder_if_not_exists(folder_path, folder_name):
-    """Prepare the destination folder for extraction (create if it doesn't exist)"""
+    """Prepare the destination folder for extraction (handling retests)"""
     extract_dir = folder_path / folder_name
-    extract_dir.mkdir(parents=True, exist_ok=True)
-    return extract_dir
+    
+    # 1. 如果資料夾還不存在，直接建立並回傳
+    if not extract_dir.exists():
+        extract_dir.mkdir(parents=True)
+        return extract_dir
+        
+    # 2. 如果資料夾已經存在，啟動 Retest 命名機制！
+    counter = 1
+    while True:
+        # 組裝新的名字，例如：#403_D0317QJ3YG_retest_1
+        new_folder_name = f"{folder_name}_retest_{counter}"
+        new_extract_dir = folder_path / new_folder_name
+        
+        # 檢查加上後綴的新名字是否可用，可以的話就建立並打完收工
+        if not new_extract_dir.exists():
+            new_extract_dir.mkdir(parents=True)
+            return new_extract_dir
+            
+        # 如果 _retest_1 也存在了，就把數字 +1，迴圈重跑檢查 _retest_2
+        counter += 1
 
 def load_unit_mapping(map_file):
     mapping = {}
