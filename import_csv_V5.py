@@ -37,7 +37,12 @@ VENDOR_MAP = {
 }
 # ==========================================
 import csv
-
+def get_sort_key(unit_str):
+    if unit_str == 'N/A':
+        return 999999
+    else:
+        return int(unit_str)
+    
 def load_compare_data(file_path):
     """Reads yesterday's CSV file for delta check (comparing old and new results)."""
     compare_results = {}
@@ -175,13 +180,16 @@ def filter_latest_test_results(input_file, output_file, unit_mapping, compare_fi
             print(f"[Info] Comparison complete! Found {len(new_sn_list)} new units and {len(change_sn_list)} units with changed status.")
             
             # 4. Print the detailed lists
+           
             if new_sn_list:
                 print("\n--- New Units List ---")
+                sorted_new = sorted(new_sn_list, key=lambda sn: get_sort_key(latest_results[sn]['data'][0]))
                 for sn in new_sn_list:
                     print(f"#{latest_results[sn]['data'][0]}_{sn}")
                     
             if change_sn_list:
                 print("\n--- Changed Units List ---")
+                sorted_new = sorted(change_sn_list, key=lambda sn: get_sort_key(latest_results[sn]['data'][0]))
                 for sn in change_sn_list:
                     print(f"#{latest_results[sn]['data'][0]}_{sn}")       
                 
