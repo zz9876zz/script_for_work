@@ -8,12 +8,32 @@ from pathlib import Path
 # Set your Config and Vendor mapping (Dictionary) here
 # ==========================================
 VENDOR_MAP = {
-    'A': 'Samsung',
-    'B': 'Micron',
-    'C': 'Hynix',    
-    'D': 'Kioxia',
-    'X3603-SOMB-P1MAIN_P1-B-Main3AV_REL4a': 'Samsung',
-    'X3603-SOMB-P1BUMAIN_P1BU-B-REL4aAV': 'Micron'
+    'X3603-SOMB-P1BUMAIN_P1BU-B-Main2AU': 'SamsungBu',
+    'X3603-SOMB-P1BUMAIN_P1BU-B-REL3aAU': 'SamsungBu',
+    'X3603-SOMB-P1BUMAIN_P1BU-B-REL2AV': 'MicronBu',
+    'X3603-SOMB-P1BUMAIN_P1BU-B-REL4aAV': 'MicronBu',
+
+    'X3603-SOMB-P1MAIN_P1-B-Main4bAU':'Samsung',
+    'X3603-SOMB-P1MAIN_P1-B-Main2AU': 'Samsung',
+    'X3603-SOMB-P1MAIN_P1-B-REL1aAU': 'Samsung(using Micron)',
+    'X3603-SOMB-P1MAIN_P1-B-REL3AU': 'Samsung',
+    'X3603-SOMB-P1MAIN_P1-B-REL5AU': 'Samsung',
+    'X3603-SOMB-P1MAIN_P1-B-REL6AV': 'Samsung',
+    'X3603-SOMB-P1MAIN_P1-B-MainFSAV': 'Samsung',
+    'X3603-SOMB-P1MAIN_P1-B-MainFFAV': 'Samsung',
+    'X3603-SOMB-P1MAIN_P1-B-MainSSAU': 'Samsung',
+
+    'X3603-SOMB-P1MAIN_P1-B-Main3AV_REL4a': 'Micron(count as samsung)',
+    'X3603-SOMB-P1MAIN_P1-B-Main1AV': 'Micron',
+    'X3603-SOMB-P1MAIN_P1-B-Main3AV': 'Micron',
+    'X3603-SOMB-P1MAIN_P1-B-Main3bAU': 'Micron',
+    'X3603-SOMB-P1MAIN_P1-B-Main3cAU': 'Micron',
+    'X3603-SOMB-P1MAIN_P1-B-REL4aAV': 'Micron',  
+    'X3603-SOMB-P1MAIN_P1-B-REL2AV': 'Micron',
+    'X3603-SOMB-P1MAIN_P1-B-Main4AU': 'Micron',
+
+    '': 'Micron',
+    '': 'Micron',
 }
 # ==========================================
 import csv
@@ -158,12 +178,12 @@ def filter_latest_test_results(input_file, output_file, unit_mapping, compare_fi
             if new_sn_list:
                 print("\n--- New Units List ---")
                 for sn in new_sn_list:
-                    print(f"  - {sn}")
+                    print(f"#{latest_results[sn]['data'][0]}_{sn}")
                     
             if change_sn_list:
                 print("\n--- Changed Units List ---")
                 for sn in change_sn_list:
-                    print(f"  - {sn}")       
+                    print(f"#{latest_results[sn]['data'][0]}_{sn}")       
                 
                 
         # Write the filtered results to a new CSV file
