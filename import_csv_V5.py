@@ -179,58 +179,62 @@ def filter_latest_test_results(input_file, output_file, unit_mapping, compare_fi
             # 3. Print the professional comparison report
             print(f"[Info] Comparison complete! Found {len(new_sn_list)} new units and {len(change_sn_list)} units with changed status.")
             
-            # 4. Print detailed lists (Sorted by Unit# and split into < 600 and >= 600)
-            if new_sn_list:
-                print("\n--- New Units List ---")
+           # 4. Print detailed lists (Grouped by Unit# first, then by New/Changed status)
+            if new_sn_list or change_sn_list:
+                
+                # 1. Sort the lists first
                 sorted_new = sorted(new_sn_list, key=lambda sn: get_sort_key(latest_results[sn]['data'][0]))
+                sorted_change = sorted(change_sn_list, key=lambda sn: get_sort_key(latest_results[sn]['data'][0]))
                 
-                # Prepare two separate lists (buckets)
-                new_P1 = []
-                new_EVT = []
+                # 2. Prepare 4 buckets for different categories
+                P1_new = []
+                EVT_new = []
+                P1_change = []
+                EVT_change = []
                 
-                # Categorize units into their respective lists
+                # 3. Categorize New units
                 for sn in sorted_new:
                     unit_str = latest_results[sn]['data'][0]
                     if get_sort_key(unit_str) < 300:
-                        new_P1.append((sn, unit_str))
+                        P1_new.append((sn, unit_str))
                     else:
-                        new_EVT.append((sn, unit_str))
-                
-                # Print the section only if the list is not empty
-                if new_P1:
-                    print("  [ Unit# < 300 ]")
-                    for sn, unit in new_P1:
-                        print(f"    - SN: {sn} | Unit#: {unit}")
-                
-                if new_EVT:
-                    print("  [ Unit# >= 300 (Including N/A) ]")
-                    for sn, unit in new_EVT:
-                        print(f"    - SN: {sn} | Unit#: {unit}")
-
-            if change_sn_list:
-                print("\n--- Changed Units List ---")
-                sorted_change = sorted(change_sn_list, key=lambda sn: get_sort_key(latest_results[sn]['data'][0]))
-                
-                # Prepare two separate lists for changed units
-                change_P1 = []
-                change_EVT = []
-                
+                        EVT_new.append((sn, unit_str))
+                        
+                # 4. Categorize Changed units
                 for sn in sorted_change:
                     unit_str = latest_results[sn]['data'][0]
                     if get_sort_key(unit_str) < 300:
-                        change_P1.append((sn, unit_str))
+                        P1_change.append((sn, unit_str))
                     else:
-                        change_EVT.append((sn, unit_str))
-                        
-                if change_P1:
-                    print("  [ Unit# < 300 ]")
-                    for sn, unit in change_P1:
-                        print(f"    - SN: {sn} | Unit#: {unit}")
-                        
-                if change_EVT:
-                    print("  [ Unit# >= 300 (Including N/A) ]")
-                    for sn, unit in change_EVT:
-                        print(f"    - SN: {sn} | Unit#: {unit}")
+                        EVT_change.append((sn, unit_str))
+                
+                # 5. Print the < 600 Section
+                if P1_new or P1_change:
+                    print("\n=== [ P1 ] ===")
+                    
+                    if P1_new:
+                        print("  --- New Units ---")
+                        for sn, unit in P1_new:
+                            print(f"    - SN: {sn} | Unit: #{unit}")
+                            
+                    if P1_change:
+                        print("  --- Changed Units ---")
+                        for sn, unit in P1_change:
+                            print(f"    - SN: {sn} | Unit: #{unit}")
+
+                # 6. Print the >= 600 Section
+                if EVT_new or EVT_change:
+                    print("\n=== [ EVT  ] ===")
+                    
+                    if EVT_new:
+                        print("  --- New Units ---")
+                        for sn, unit in EVT_new:
+                            print(f"    - SN: {sn} | Unit: #{unit}")
+                            
+                    if EVT_change:
+                        print("  --- Changed Units ---")
+                        for sn, unit in EVT_change:
+                            print(f"    - SN: {sn} | Unit: #{unit}")
                 
                 
         # Write the filtered results to a new CSV file
