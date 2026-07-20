@@ -179,19 +179,58 @@ def filter_latest_test_results(input_file, output_file, unit_mapping, compare_fi
             # 3. Print the professional comparison report
             print(f"[Info] Comparison complete! Found {len(new_sn_list)} new units and {len(change_sn_list)} units with changed status.")
             
-            # 4. Print the detailed lists
-           
+            # 4. Print detailed lists (Sorted by Unit# and split into < 600 and >= 600)
             if new_sn_list:
                 print("\n--- New Units List ---")
                 sorted_new = sorted(new_sn_list, key=lambda sn: get_sort_key(latest_results[sn]['data'][0]))
-                for sn in new_sn_list:
-                    print(f"#{latest_results[sn]['data'][0]}_{sn}")
-                    
+                
+                # Prepare two separate lists (buckets)
+                new_P1 = []
+                new_EVT = []
+                
+                # Categorize units into their respective lists
+                for sn in sorted_new:
+                    unit_str = latest_results[sn]['data'][0]
+                    if get_sort_key(unit_str) < 300:
+                        new_P1.append((sn, unit_str))
+                    else:
+                        new_EVT.append((sn, unit_str))
+                
+                # Print the section only if the list is not empty
+                if new_P1:
+                    print("  [ Unit# < 300 ]")
+                    for sn, unit in new_P1:
+                        print(f"    - SN: {sn} | Unit#: {unit}")
+                
+                if new_EVT:
+                    print("  [ Unit# >= 300 (Including N/A) ]")
+                    for sn, unit in new_EVT:
+                        print(f"    - SN: {sn} | Unit#: {unit}")
+
             if change_sn_list:
                 print("\n--- Changed Units List ---")
-                sorted_new = sorted(change_sn_list, key=lambda sn: get_sort_key(latest_results[sn]['data'][0]))
-                for sn in change_sn_list:
-                    print(f"#{latest_results[sn]['data'][0]}_{sn}")       
+                sorted_change = sorted(change_sn_list, key=lambda sn: get_sort_key(latest_results[sn]['data'][0]))
+                
+                # Prepare two separate lists for changed units
+                change_P1 = []
+                change_EVT = []
+                
+                for sn in sorted_change:
+                    unit_str = latest_results[sn]['data'][0]
+                    if get_sort_key(unit_str) < 300:
+                        change_P1.append((sn, unit_str))
+                    else:
+                        change_EVT.append((sn, unit_str))
+                        
+                if change_P1:
+                    print("  [ Unit# < 300 ]")
+                    for sn, unit in change_P1:
+                        print(f"    - SN: {sn} | Unit#: {unit}")
+                        
+                if change_EVT:
+                    print("  [ Unit# >= 300 (Including N/A) ]")
+                    for sn, unit in change_EVT:
+                        print(f"    - SN: {sn} | Unit#: {unit}")
                 
                 
         # Write the filtered results to a new CSV file
